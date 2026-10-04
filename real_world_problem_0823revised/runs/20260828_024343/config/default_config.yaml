@@ -1,0 +1,201 @@
+grid:
+  width: 57
+  height: 98
+  cell_size_meters: 1.0
+venue_shape:
+  areas:
+  - name: upper_plaza
+    polygon:
+    - - 16
+      - 10
+    - - 32
+      - 10
+    - - 45
+      - 20
+    - - 45
+      - 37
+    - - 16
+      - 37
+  - name: lower_plaza
+    polygon:
+    - - 16
+      - 45
+    - - 45
+      - 45
+    - - 49
+      - 62
+    - - 30
+      - 83
+    - - 16
+      - 83
+  walkways:
+  - name: cross_road
+    polygon:
+    - - 0
+      - 37
+    - - 57
+      - 37
+    - - 57
+      - 45
+    - - 0
+      - 45
+  - name: west_street
+    polygon:
+    - - 11
+      - 0
+    - - 16
+      - 0
+    - - 16
+      - 88
+    - - 11
+      - 88
+  - name: south_street
+    polygon:
+    - - 16
+      - 82
+    - - 29
+      - 82
+    - - 30
+      - 88
+    - - 16
+      - 88
+  - name: south_vertical_street
+    polygon:
+    - - 20
+      - 82
+    - - 30
+      - 82
+    - - 30
+      - 98
+    - - 20
+      - 98
+  - name: bus_terminal_street
+    polygon:
+    - - 30
+      - 82
+    - - 47
+      - 62
+    - - 45
+      - 45
+    - - 57
+      - 45
+    - - 57
+      - 62
+    - - 30
+      - 88
+  - name: upper_street
+    polygon:
+    - - 0
+      - 0
+    - - 30
+      - 0
+    - - 32
+      - 10
+    - - 0
+      - 10
+  - name: upper_bus_terminal_street
+    polygon:
+    - - 30
+      - 0
+    - - 57
+      - 22
+    - - 57
+      - 37
+    - - 45
+      - 37
+    - - 45
+      - 20
+    - - 32
+      - 10
+  obstacles:
+  - name: tree
+    polygon:
+    - - 33
+      - 66
+    - - 36
+      - 66
+    - - 36
+      - 69
+    - - 33
+      - 69
+time:
+  dt_seconds: 1.0
+  duration_seconds: 400.0
+  max_speed_mps: 1.0
+capacities:
+  default: 3
+  queue: 2
+  entrance: 10
+  exit: 10
+entrance_exit:
+  entrance_side: bottom
+  exit_side: top
+  span_cells: 2
+  clearance_cells: 0
+booth_geometry:
+  reception_position: bottom_left
+  exit_position: bottom_right
+  queue_pattern: left_then_clockwise
+  queue_capacity_per_cell: 2
+  queue_walkable: false
+simulation:
+  n_visitors: 200
+  evaluation_seed: 0
+  safe_occupancy_ratio: 0.67
+  timeout_seconds: 30.0
+  replan_interval_steps: 10
+  blocked_replan_count: 3
+  congestion_travel_time_weight: 1.0
+  softmax_temperature: 0.3
+  q_norm_seconds: 600.0
+  giveup_utility_penalty: 0.5
+  utility_min_threshold: 0.0
+resting:
+  rest_seconds: 45
+  after_food_probability: 0.65
+  after_categories:
+  - food
+  fatigue_threshold: 0.65
+  fatigue_walk_per_second: 0.0025
+  fatigue_wait_per_second: 0.0008
+  fatigue_experience_per_second: 0.0004
+  fatigue_recovery_per_second: 0.015
+  occupancy_weight: 0.5
+utility_weights:
+  interest: 1.0
+  attract: 0.5
+  distance: 1.0
+  queue: 0.8
+  crowd: 0.6
+arrival_profile:
+- - 0.0
+  - 40.0
+  - 0.3
+- - 40.0
+  - 120.0
+  - 1.0
+- - 120.0
+  - 280.0
+  - 1.6
+- - 280.0
+  - 360.0
+  - 1.0
+- - 360.0
+  - 400.0
+  - 0.3
+constraints:
+  min_corridor_width: 1
+happiness:
+  alpha: 0.05
+  beta: 0.1
+  gamma: 0.3
+  rest_bonus: 0.15
+  fatigue_penalty: 0.5
+optimization:
+  population_size: 100
+  n_generations: 200
+waste_disposal:
+  general_probability: 0.05
+  after_food_probability: 0.85
+  after_categories:
+  - food

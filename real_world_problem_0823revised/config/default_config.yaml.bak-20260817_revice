@@ -1,0 +1,143 @@
+# イベント会場ブース配置最適化 既定設定(仕様書 v2 準拠)
+# 会場形状は data/会場概略図/venue_abst.jpg(実会場の手描き概略図)に基づく。
+grid:
+  width: 57          # 実会場バウンディングボックス: x 方向セル数
+  height: 98         # 実会場バウンディングボックス: y 方向セル数
+  cell_size_meters: 1.0
+
+# 実会場の形状定義(1 セル = 1m、頂点は (x, y) メートル、y は下向き)。
+# - areas: ブース配置可能な広場。
+# - walkways: 歩行のみ可能な道路。グリッド境界に達する道路セルが
+#   「領域外への開口部」となり、来場者はそこから自由に到来・退出する
+#   (入口/出口の区別・指定はしない)。広場と道路の境界も自由通行。
+# - obstacles: 場内の通行不可障害物。
+# 概略図の寸法を優先して頂点を決定した。手描き図の寸法は相互に完全には
+# 整合しない(下部広場の斜辺 17m/20m は他辺と閉合しない)ため、
+# 17m 側を優先し 20m 側の斜辺は閉合上約 26m とした。障害物(樹木)と
+# 道路幅の一部は図からの目測。実測値が得られたら頂点座標のみ修正すればよい。
+venue_shape:
+  areas:
+    - name: upper_plaza        # 上部広場: 上辺16m・斜め切欠き・右辺17m・下辺29m・左辺27m
+      polygon: [[16, 10], [32, 10], [45, 20], [45, 37], [16, 37]]
+    - name: lower_plaza        # 下部広場: 上辺29m・右斜辺17m・下斜辺・下辺14m・左辺37m
+      polygon: [[16, 45], [45, 45], [49, 62], [30, 83], [16, 83]]
+  walkways:
+    - name: cross_road         # 両広場の間を東西に走る幅 8m の道路(左右とも領域外へ)
+      polygon: [[0, 37], [57, 37], [57, 45], [0, 45]]
+    - name: west_street        # 広場西側を南北に走る道路(幅約5m、上下とも領域外へ)
+      polygon: [[11, 0], [16, 0], [16, 88], [11, 88]]
+    - name: south_street       # 下部広場の南辺 14m から南の領域外へ続く道路
+      polygon: [[16, 82], [29, 82], [30, 88], [16, 88]]
+    - name: south_vertical_street  # 下部広場の南辺 30m から南の領域外へ続く道路
+      polygon: [[20, 82], [30, 82], [30, 98], [20, 98]]
+    - name: bus_terminal_street  # 下部広場の南辺 47m から南の領域外へ続く道路
+      polygon: [[30, 82], [47, 62], [45, 45], [57, 45], [57, 62], [30, 88]]  
+    - name: upper_street       # 上部広場の上辺 16m から北の領域外へ続く道路
+      polygon: [[0, 0], [30, 0], [32, 10], [0, 10]]  # 上辺 16m の道路幅を約 3m に縮小して閉合
+    - name: upper_bus_terminal_street  # 上部広場の上辺 32m から北の領域外へ続く道路
+      polygon: [[30, 0], [57, 22], [57, 37], [45, 37], [45, 20], [32, 10]]
+  obstacles:
+    - name: tree               # 下部広場内の樹木(3m×3m、位置は図からの目測)
+      polygon: [[33, 66], [36, 66], [36, 69], [33, 69]]
+
+time:
+  dt_seconds: 1.0
+  duration_seconds: 3600     # 実イベントのピーク 1 時間を対象にする。
+                             # booths.yaml の最長体験 600 秒(ジャズ)を収容できる長さ。
+  max_speed_mps: 1.0
+
+capacities:
+  default: 3
+  queue: 3                   # 待機列 1 セル 3 人(≒3 人/m²)。行列の実密度は 2〜3 人/m²。
+                             # 5 人/m² は群集事故が起きる水準で、行列としては非現実的。
+  entrance: 10               # 2 セル合計で毎ステップ最大 20 人
+  exit: 10
+
+entrance_exit:
+  # 入口・出口は指定しない。venue_shape 使用時は境界に達する道路セル
+  # (開口部)が入退場セル集合として自動導出される。
+  # 明示したい場合のみ entrance_cells / exit_cells に [[x, y], ...] を書く。
+  entrance_side: bottom      # venue_shape 未使用時のフォールバック
+  exit_side: top
+  span_cells: 2
+  clearance_cells: 0
+
+booth_geometry:
+  reception_position: bottom_left
+  exit_position: bottom_right
+  queue_pattern: left_then_clockwise
+  queue_capacity_per_cell: 3   # capacities.queue と揃える
+  queue_walkable: false
+
+simulation:
+  n_visitors: 900           # 駅前広場イベントのピーク 1 時間で 0.25 人/秒 × 3600 秒。
+                            # ※ 計算コストが問題になる場合はここをサンプリング倍率として
+                            #    下げる(ブース値の実態とは別の判断)。
+  evaluation_seed: 0
+  safe_occupancy_ratio: 0.67 # §12.2
+  timeout_seconds: 120.0     # §17.6。3600 秒 × 900 人で 1 評価あたり実測 30 秒前後。
+  replan_interval_steps: 10  # §9.3
+  blocked_replan_count: 3    # §9.3
+  # セル占有率 r に対し、1セルの所要時間を (1 + weight * r^2) 倍する。
+  # weight=1.0 の場合、占有率50%で1.25倍、100%で2倍。
+  congestion_travel_time_weight: 1.0
+  softmax_temperature: 0.3   # §8
+  q_norm_seconds: 900.0      # §8 Q_norm。待ち 15 分で待ち時間ペナルティが最大になる
+  giveup_utility_penalty: 0.5   # §8 諦めブースへの減点
+  utility_min_threshold: 0.0    # §8 全候補がこの値未満なら EXITING
+
+# 疲労とテーブル（ベンチ）利用。
+# 疲労度は 0～1。歩行・待機・体験で増え、着席中に減る。
+resting:
+  rest_seconds: 900             # 飲食の着席時間は 15〜20 分。45 秒は着席とみなせない
+  after_food_probability: 0.65  # 飲食体験後にテーブルへ向かう来場者の割合
+  after_categories: [food]
+  fatigue_threshold: 0.65       # この疲労度以上でもテーブルを探す
+  fatigue_walk_per_second: 0.0025
+  fatigue_wait_per_second: 0.0008
+  fatigue_experience_per_second: 0.0004
+  fatigue_recovery_per_second: 0.0012  # 着席 900 秒でほぼ全快する速度。0.015 だと 67 秒で
+                                       # 全快し、残りの着席時間が無意味になる。
+                                       # 増加レート 3 項目は物理量なので変更しない。
+  occupancy_weight: 0.5         # テーブル選択時の満席度ペナルティ
+
+utility_weights:             # §8 既定重み
+  interest: 1.0
+  attract: 0.5
+  distance: 1.0
+  queue: 0.8
+  crowd: 0.6
+
+# 到着プロファイル(§7): 時間帯ごとの来場ペースを [start, end, rate] の
+# 区間リストで指定する。
+#   - start / end : シミュレーション開始からの経過秒(0 〜 duration_seconds)。
+#                    区間はここに列挙した順に隙間なく並べる(重複・抜けは不可)。
+#                    最後の区間の end は duration_seconds と一致させる。
+#   - rate        : その区間の「相対的な来場密度」。絶対人数ではなく、
+#                    区間人数 ∝ rate × (end − start) で n_visitors を按分する
+#                    (全区間の按分後に端数調整するので合計は必ず n_visitors)。
+#                    区間を増減させたり rate の値を変えるだけで自由に
+#                    ペース配分を変更できる(コード変更は不要)。
+# 例: 開場直後は少なく→昼前後にピーク→終盤にまた落ち着く来場ペース。
+arrival_profile:
+  - [0,    360,  0.3]   # 開場直後: 閑散
+  - [360,  1080, 1.0]   # 立ち上がり: 通常
+  - [1080, 2520, 1.6]   # 昼のピーク: 混雑
+  - [2520, 3240, 1.0]   # 落ち着き: 通常
+  - [3240, 3600, 0.3]   # 終盤: 閑散
+
+constraints:
+  min_corridor_width: 1      # 20260629 には最低通路幅の追加制約なし。
+                             # models.py が 4 を下限として強制していたのを撤廃したので、
+                             # ここの指定が実効値になる(旧: 46 個中 19 個が到達不能)。
+
+happiness:                   # §13 補助KPI
+  alpha: 0.05
+  beta: 0.1
+  gamma: 0.3
+  rest_bonus: 0.15
+  fatigue_penalty: 0.5
+
+optimization:                # §15
+  population_size: 100
+  n_generations: 100

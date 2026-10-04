@@ -1,0 +1,164 @@
+{
+  "method": "single_level_direct_120_layout_nsga2",
+  "n_genes": 120,
+  "encoding": "active booth=(x,y,theta), table=(x,y)",
+  "equivalent_tables": {
+    "equivalence": "same_area_and_same_simulation_specification",
+    "canonicalization": "coordinates_sorted_by_y_then_x_and_assigned_to_ascending_booth_id",
+    "equivalent_table_swap_mutation": "forbidden"
+  },
+  "crossover": {
+    "type": "booth_block_two_point",
+    "probability": 0.9,
+    "cut_points": "between_booths",
+    "preserves_booth_gene_blocks": true,
+    "invalid_offspring": "revert_to_corresponding_parent"
+  },
+  "orderliness_limits": {
+    "organization_nonmembership": 0.3,
+    "motif_complexity": 1.2,
+    "strong_structure_nonmembership": 0.55,
+    "alignment_error": 0.36,
+    "gap_variation": 0.3,
+    "orientation": 0.25,
+    "isolation": 0.2,
+    "front_clearance": 0.0,
+    "wide_aisle_deficit": 0.35,
+    "path_turns": 4.0
+  },
+  "initialization": "random_greedy_geometry_plus_one_cell_reachability",
+  "uses_fixed_position_for_initialization": false,
+  "post_optimization_repair": false,
+  "reachability_constraints": {
+    "initialization_and_operator_hard_constraint": "geometry_plus_one_cell_width",
+    "environmental_selection": "three_cell_active_booth_deficit_is_a_loose_acceptability_constraint",
+    "simulation_walkable": "widest_available_path_per_target_in_order_4_3_2_1",
+    "final_pareto_requirement": "all_booths_at_least_one_cell_reachable"
+  },
+  "objectives": {
+    "f_move": "mean_free_walk_seconds_from_attached_metrics",
+    "f_congestion": "booth_near_congestion_from_attached_metrics"
+  },
+  "orderliness": {
+    "role": "front_clearance_is_physical_hard_constraint_seven_nonredundant_metrics_are_acceptability_constraints",
+    "aggregation": "seven_independent_constraints_without_compensation",
+    "constraint_keys": [
+      "strong_structure_nonmembership",
+      "alignment_error",
+      "gap_variation",
+      "orientation",
+      "isolation",
+      "wide_aisle_deficit",
+      "path_turns"
+    ],
+    "diagnostic_only_keys": [
+      "organization_nonmembership",
+      "motif_complexity",
+      "front_clearance"
+    ],
+    "path_turn_constraint_weight": 3.0,
+    "grouping": "area_x_mixed_plus_active_and_table_checks",
+    "motifs": [
+      "interior_horizontal_or_vertical_lane",
+      "venue_boundary_chain"
+    ],
+    "tables": "same_motif_rules_as_active_booths_without_orientation_check",
+    "minimum_strong_lane_size": 2,
+    "minimum_strong_motif_size": 3,
+    "minimum_boundary_chain_size": 1,
+    "wide_aisle_width_cells": 3,
+    "boundary_band_cells": 5.0,
+    "boundary_alignment_tolerance_cells": 4.0,
+    "motif_target_size": 3,
+    "lane_alignment_tolerance_cells": 1.0,
+    "maximum_lane_edge_gap_cells": 6.0,
+    "front_clearance_depth_cells": 4,
+    "weighted_compensation": false
+  },
+  "mutation": {
+    "exploration_phase": {
+      "through_generation": 200,
+      "individual_probability": 0.4,
+      "local_weight": 0.2,
+      "meso_weight": 0.3,
+      "macro_weight": 0.5
+    },
+    "standard_phase": {
+      "individual_probability": 0.2,
+      "local_weight": 0.55,
+      "meso_weight": 0.3,
+      "macro_weight": 0.15
+    },
+    "donor_pool": {
+      "maximum_size": 32,
+      "minimum_layout_distance": 0.05,
+      "refresh_probability": 0.25
+    },
+    "local_orientation_change": {
+      "magnitude_degrees": [
+        90,
+        180
+      ],
+      "magnitude_probability": [
+        0.5,
+        0.5
+      ],
+      "ninety_degree_direction": "clockwise_or_counterclockwise_with_equal_probability"
+    }
+  },
+  "memetic": {
+    "start_generation": 201,
+    "interval_generations": 5,
+    "nondominated_parents": 10,
+    "neighbors_per_parent": 10,
+    "max_neighbor_trials": 1000
+  },
+  "orderliness_constraint_application": {
+    "mode": "physical_hard_plus_orderliness_acceptability_constraints",
+    "limits": {
+      "organization_nonmembership": 0.3,
+      "motif_complexity": 1.2,
+      "strong_structure_nonmembership": 0.55,
+      "alignment_error": 0.36,
+      "gap_variation": 0.3,
+      "orientation": 0.25,
+      "isolation": 0.2,
+      "front_clearance": 0.0,
+      "wide_aisle_deficit": 0.35,
+      "path_turns": 4.0
+    },
+    "physical_constraint_index": 0,
+    "acceptability_constraint_indices": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "selection_priority": [
+      "physically_feasible",
+      "all_acceptability_constraints_satisfied",
+      "minimum_weighted_acceptability_violation"
+    ]
+  },
+  "layout_diversity": {
+    "minimum_layout_distance": 0.15,
+    "distance": "identifier_independent_coarse_footprint_jaccard_80pct_plus_facing_pattern_jaccard_20pct",
+    "coarse_bin_cells": 3,
+    "novelty_crowding_weight": 0.35,
+    "selection": "physical_then_acceptability_then_rank_crowding_plus_visual_layout_novelty"
+  },
+  "donor_pool_final_size": 32,
+  "exact_speedups": {
+    "constraint_cache": "bounded exact integer-genotype cache per process",
+    "shared_geometry": "physical and orderliness checks reuse identical placement geometry",
+    "shared_motif_features": "centers, sizes, lanes, groups, and boundary segments are reused",
+    "redundant_feasibility_checks_removed": true,
+    "parallel_initialization": "bounded random-greedy tasks with deterministic per-individual seeds",
+    "parallel_memetic_generation": "deterministic per-parent tasks on the evaluation process pool",
+    "surrogate_or_approximation": false,
+    "evaluation_budget_changed": false
+  }
+}

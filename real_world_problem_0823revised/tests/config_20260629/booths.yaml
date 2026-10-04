@@ -1,0 +1,57 @@
+# 20260629 の BOOTH_SPECS を (width, height) に変換した 6 ブース。
+# 受付セルを除く待機列専用セルは、2x2 で 4 セル、3x2 で 5 セル。
+booths:
+  - booth_id: 0
+    name: "ブース1"
+    width: 2
+    height: 2
+    category: food
+    attractiveness: 0.9
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 4
+  - booth_id: 1
+    name: "ブース2"
+    width: 2
+    height: 2
+    category: food
+    attractiveness: 0.7
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 4
+  - booth_id: 2
+    name: "ブース3"
+    width: 2
+    height: 2
+    category: goods
+    attractiveness: 0.6
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 4
+  - booth_id: 3
+    name: "ブース4"
+    width: 3
+    height: 2
+    category: workshop
+    attractiveness: 0.8
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 5
+  - booth_id: 4
+    name: "ブース5"
+    width: 3
+    height: 2
+    category: exhibit
+    attractiveness: 0.5
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 5
+  - booth_id: 5
+    name: "ブース6"
+    width: 3
+    height: 2
+    category: game
+    attractiveness: 0.75
+    capacity: 1
+    mean_service_seconds: 5
+    max_queue_length: 5

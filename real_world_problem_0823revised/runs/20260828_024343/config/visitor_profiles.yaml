@@ -1,0 +1,18 @@
+profiles:
+- name: 20260629標準
+  ratio: 0.7
+  speed_mps: 1.0
+  congestion_avoidance: 1.0
+  queue_tolerance_seconds: 900
+  max_visit_seconds: 3600
+  distance_weight_factor: 1.0
+  interest_mode: uniform
+- name: 通り抜け
+  ratio: 0.3
+  speed_mps: 1.0
+  congestion_avoidance: 1.0
+  queue_tolerance_seconds: 0
+  max_visit_seconds: 3600
+  distance_weight_factor: 1.0
+  interest_mode: uniform
+  passerby: true

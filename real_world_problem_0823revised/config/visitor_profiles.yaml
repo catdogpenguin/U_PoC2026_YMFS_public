@@ -1,0 +1,33 @@
+# 来場者プロファイル。ratio は相対比で、合計 1 でなくても内部で正規化される。
+# interest_mode:
+#   uniform    : 興味を U(0,1) で生成
+#   focused    : 特定カテゴリ U(0.7,1.0)、他 U(0,0.4)(目的志向)
+#   dispersed  : 全カテゴリ U(0.4,0.8)(回遊型・興味分散)
+# distance_weight_factor: 効用の w_distance に乗じる係数
+# passerby: true にすると「広場を素通りするだけの通行人」になる。
+#   ブースを一切選ばず、入ってきた開口部とは別の開口部へ向かって歩き、
+#   会場外へ抜ける(駅前広場の通勤・通学者などを想定)。ブース選択に
+#   関わる項目(queue_tolerance_seconds / max_visit_seconds /
+#   distance_weight_factor / interest_mode)は使われないが、
+#   歩行速度・混雑回避は通常の来場者と同じように効き、
+#   通路やブース周辺の混雑にはそのまま寄与する。
+profiles:
+  - name: "20260629標準"
+    ratio: 0.7                  # 会場に来た人(ブースを回る)
+    speed_mps: 1.0
+    congestion_avoidance: 1.0
+    queue_tolerance_seconds: 900  # 人気ブースには 15 分は並ぶ
+    max_visit_seconds: 3600       # 会場滞在 1 時間。屋外イベントの平均滞在時間。
+                                  # 体験時間(最長 600 秒)に対して十分な長さが必要で、
+                                  # 短すぎると諦め判定で容量が空いていても入場できない。
+    distance_weight_factor: 1.0
+    interest_mode: uniform
+  - name: "通り抜け"
+    ratio: 0.3                  # 駅前広場を素通りするだけの通行人
+    speed_mps: 1.0
+    congestion_avoidance: 1.0
+    queue_tolerance_seconds: 0  # 以下 4 項目は passerby では未使用
+    max_visit_seconds: 3600
+    distance_weight_factor: 1.0
+    interest_mode: uniform
+    passerby: true

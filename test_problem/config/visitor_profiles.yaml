@@ -1,0 +1,15 @@
+# 20260629 の標準エージェントに寄せた単一プロファイル
+# interest_mode:
+#   uniform    : 興味を U(0,1) で生成
+#   focused    : 特定カテゴリ U(0.7,1.0)、他 U(0,0.4)(目的志向)
+#   dispersed  : 全カテゴリ U(0.4,0.8)(回遊型・興味分散)
+# distance_weight_factor: 効用の w_distance に乗じる係数
+profiles:
+  - name: "20260629標準"
+    ratio: 1.0
+    speed_mps: 1.0
+    congestion_avoidance: 1.0
+    queue_tolerance_seconds: 400
+    max_visit_seconds: 400
+    distance_weight_factor: 1.0
+    interest_mode: uniform
